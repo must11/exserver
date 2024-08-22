@@ -124,9 +124,10 @@ func (es *ExServer) CleanCloseSignal() {
 	es.closeSignal = es.closeSignal[:0]
 }
 
-func (es *ExServer) Listen(addr string, handler http.Handler) {
+func (es *ExServer) Listen(addr string, handler http.Handler) *ExServer {
 	es.addr = addr
 	es.handler = handler
+	return es
 }
 
 // 调用reboot,
@@ -146,9 +147,9 @@ func (es *ExServer) ReBoot(ctx context.Context, wg *sync.WaitGroup) {
 }
 
 // 同http.server.RegisterOnShutdown
-func (es *ExServer) RegisterOnShutdown(f func()) {
+func (es *ExServer) RegisterOnShutdown(f ...func()) {
 	es.mu.Lock()
-	es.onShutdown = append(es.onShutdown, f)
+	es.onShutdown = append(es.onShutdown, f...)
 	es.mu.Unlock()
 }
 
